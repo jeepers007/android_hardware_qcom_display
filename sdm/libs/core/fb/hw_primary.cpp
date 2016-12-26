@@ -65,6 +65,10 @@
 #define MDP_COMMIT_AVR_ONE_SHOT_MODE 0x10
 #endif
 
+#ifndef MDP_COMMIT_PARTIAL_UPDATE_DUAL_ROI
+#define MDP_COMMIT_PARTIAL_UPDATE_DUAL_ROI  0x20
+#endif
+
 namespace sdm {
 
 using std::string;
@@ -223,10 +227,11 @@ DisplayError HWPrimary::PopulateDisplayAttributes() {
     return kErrorHardware;
   }
 
-  // If driver doesn't return width/height information, default to 160 dpi
+  // If driver doesn't return width/height information, default to 320 dpi
   if (INT(var_screeninfo.width) <= 0 || INT(var_screeninfo.height) <= 0) {
-    var_screeninfo.width  = UINT32(((FLOAT(var_screeninfo.xres) * 25.4f)/160.0f) + 0.5f);
-    var_screeninfo.height = UINT32(((FLOAT(var_screeninfo.yres) * 25.4f)/160.0f) + 0.5f);
+    var_screeninfo.width  = UINT32(((FLOAT(var_screeninfo.xres) * 25.4f)/320.0f) + 0.5f);
+    var_screeninfo.height = UINT32(((FLOAT(var_screeninfo.yres) * 25.4f)/320.0f) + 0.5f);
+    DLOGW("Driver doesn't report panel physical width and height - defaulting to 320dpi");
   }
 
   display_attributes_.x_pixels = var_screeninfo.xres;
@@ -373,6 +378,7 @@ DisplayError HWPrimary::Validate(HWLayers *hw_layers) {
 
   // Update second roi information in right_roi
   if (hw_layer_info.left_frame_roi.size() == 2) {
+    mdp_commit.flags |= MDP_COMMIT_PARTIAL_UPDATE_DUAL_ROI;
     right_roi = hw_layer_info.left_frame_roi.at(1);
   }
 
@@ -398,7 +404,7 @@ DisplayError HWPrimary::Validate(HWLayers *hw_layers) {
     mdp_out_layer_.buffer.comp_ratio.numer = UINT32(hw_layers->output_compression * 1000);
     mdp_out_layer_.buffer.fence = -1;
 #ifdef OUT_LAYER_COLOR_SPACE
-    SetCSC(output_buffer->csc, &mdp_out_layer_.color_space);
+    SetCSC(output_buffer->color_metadata, &mdp_out_layer_.color_space);
 #endif
     SetFormat(output_buffer->format, &mdp_out_layer_.buffer.format);
     mdp_commit.flags |= MDP_COMMIT_CWB_EN;
