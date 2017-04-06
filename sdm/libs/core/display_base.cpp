@@ -156,8 +156,8 @@ DisplayError DisplayBase::BuildLayerStackStats(LayerStack *layer_stack) {
            hw_layers_info.gpu_target_index, display_type_);
 
   if (!hw_layers_info.app_layer_count) {
-    DLOGE("Layer count is zero");
-    return kErrorParameters;
+    DLOGW("Layer count is zero");
+    return kErrorNoAppLayers;
   }
 
   if (hw_layers_info.gpu_target_index) {
@@ -1124,7 +1124,7 @@ void DisplayBase::PostCommitLayerParams(LayerStack *layer_stack) {
   // Copy the release fence from HWLayers to clients layers
     uint32_t hw_layers_count = UINT32(hw_layers_.info.hw_layers.size());
 
-  std::vector<uint32_t> fence_dup_flag = {};
+  std::vector<uint32_t> fence_dup_flag;
 
   for (uint32_t i = 0; i < hw_layers_count; i++) {
     uint32_t sdm_layer_index = hw_layers_.info.index[i];
