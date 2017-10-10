@@ -234,12 +234,6 @@ struct private_handle_t : public native_handle {
         int     consumer_usage;
         uint64_t backing_store __attribute__((aligned(8)));
 
-        int     original_width;
-        int     original_format;
-        int     producer_usage;
-        int     consumer_usage;
-        uint64_t backing_store __attribute__((aligned(8)));
-
         uint64_t base_metadata __attribute__((aligned(8)));
 
 #ifdef __cplusplus
