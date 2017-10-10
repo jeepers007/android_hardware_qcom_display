@@ -72,9 +72,9 @@ struct private_module_t HAL_MODULE_INFO_SYM = {
         .common = {
             .tag = HARDWARE_MODULE_TAG,
 #ifdef ADVERTISE_GRALLOC1
-            module_api_version: GRALLOC1_ADAPTER_MODULE_API_VERSION_1_0,
+            module_api_version = GRALLOC1_ADAPTER_MODULE_API_VERSION_1_0,
 #else
-            module_api_version: 1,
+            module_api_version = 1,
 #endif
             .version_minor = 0,
             .id = GRALLOC_HARDWARE_MODULE_ID,
